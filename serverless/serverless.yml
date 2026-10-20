@@ -1,0 +1,45 @@
+
+# org: cayosi115
+# app: servicio-correo
+service: servicio-envio-correo
+
+frameworkVersion: '>=3.0.0 <5.0.0'
+useDotenv: true
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'us-east-1'}
+  memorySize: 256
+  timeout: 15
+  environment:
+    SENDGRID_API_KEY: ${env:SENDGRID_API_KEY, ''}
+    SENDGRID_FROM_EMAIL: ${env:SENDGRID_FROM_EMAIL, 'cayosi115@gmail.com'}
+  httpApi:
+    cors:
+      allowedOrigins:
+        - '*'
+      allowedHeaders:
+        - Content-Type
+        - Authorization
+        - X-Api-Key
+      allowedMethods:
+        - GET
+        - POST
+        - OPTIONS
+
+functions:
+  sendEmail:
+    handler: index.handler
+    description: "Función Lambda en Node.js para envío de correos vía SendGrid"
+    events:
+      # Endpoint HTTP API (API Gateway v2 - Rápido, económico y con CORS)
+      - httpApi:
+          path: /send-email
+          method: post
+      # Endpoint REST API estándar (opcional/alternativo con soporte CORS tradicional)
+      - http:
+          path: send-email
+          method: post
+          cors: true

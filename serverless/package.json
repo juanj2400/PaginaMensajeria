@@ -1,0 +1,23 @@
+{
+  "name": "servicio-envio-correo-serverless",
+  "version": "1.0.0",
+  "description": "Función Lambda Serverless en Node.js para envío de correos con SendGrid",
+  "main": "index.js",
+  "scripts": {
+    "start": "node local-server.js",
+    "deploy": "serverless deploy",
+    "deploy:prod": "serverless deploy --stage prod",
+    "info": "serverless info",
+    "logs": "serverless logs -f sendEmail -t"
+  },
+  "dependencies": {
+    "@sendgrid/mail": "^8.1.6"
+  },
+  "devDependencies": {
+    "serverless": "^3.39.0"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}

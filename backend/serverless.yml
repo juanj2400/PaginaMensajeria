@@ -1,0 +1,43 @@
+service: servicio-correo-backend
+
+frameworkVersion: '>=3.0.0 <5.0.0'
+
+provider:
+  name: aws
+  runtime: java17
+  stage: ${opt:stage, 'dev'}
+  region: ${opt:region, 'us-east-1'}
+  memorySize: 1536
+  timeout: 30
+  environment:
+    SENDGRID_API_KEY: ${env:SENDGRID_API_KEY}
+    SENDGRID_FROM_EMAIL: ${env:SENDGRID_FROM_EMAIL, 'cayosi115@gmail.com'}
+
+package:
+  artifact: target/servicio-correo-backend-1.0.0-lambda.jar
+
+functions:
+  api:
+    handler: com.serviciocorreo.config.StreamLambdaHandler::handleRequest
+    description: Lambda Function con Spring Boot 3 y SendGrid
+    events:
+      - http:
+          path: send-email
+          method: post
+          cors:
+            origin: '*'
+            headers:
+              - Content-Type
+              - X-Amz-Date
+              - Authorization
+              - X-Api-Key
+              - X-Amz-Security-Token
+              - X-Amz-User-Agent
+      - http:
+          path: health
+          method: get
+          cors: true
+      - http:
+          path: /{proxy+}
+          method: any
+          cors: true

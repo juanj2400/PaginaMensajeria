@@ -1,0 +1,51 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Build and compiled outputs
+target/
+**/target/
+dist/
+**/dist/
+out-tsc/
+**/out-tsc/
+.angular/
+**/.angular/
+
+# Environment files and credentials
+.env
+**/.env
+.env.local
+**/.env.local
+!.env.example
+!**/.env.example
+
+# Serverless Framework artifacts
+.serverless/
+**/.serverless/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDE and editors
+.idea/
+**/.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+.classpath
+.project
+.settings/
+
+# OS metadata
+.DS_Store
+Thumbs.db

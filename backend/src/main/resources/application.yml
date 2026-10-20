@@ -1,0 +1,20 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: servicio-correo-backend
+  main:
+    banner-mode: console
+
+sendgrid:
+  api-key: ${SENDGRID_API_KEY:}
+  from-email: ${SENDGRID_FROM_EMAIL:cayosi115@gmail.com}
+
+serverless:
+  email-url: ${SERVERLESS_EMAIL_URL:http://localhost:3000/send-email}
+
+logging:
+  level:
+    root: INFO
+    com.serviciocorreo: DEBUG
