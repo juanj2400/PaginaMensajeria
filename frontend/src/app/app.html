@@ -1,285 +1,176 @@
 <div class="page-container">
-  <!-- Top Navigation / Brand Header -->
-  <header class="app-header">
-    <div class="brand-badge">
-      <span class="badge-dot"></span>
-      <span>Sistema Serverless de Mensajería</span>
-    </div>
-    <h1 class="main-title">
-      Despacho de Correos con <span class="gradient-text">SendGrid & AWS</span>
-    </h1>
-    <p class="main-subtitle">
-      Arquitectura desacoplada en Angular y Spring Boot 3 desplegado en AWS Lambda con Serverless Framework.
-    </p>
+  <div class="card form-card">
+    <!-- Header -->
+    <header class="card-header">
+      <div class="header-content">
+        <div class="header-icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+            <polyline points="22,6 12,13 2,6"></polyline>
+          </svg>
+        </div>
+        <div>
+          <h1 class="card-title">Enviar Correo</h1>
+          <p class="card-subtitle">Completa los campos para enviar tu mensaje</p>
+        </div>
+      </div>
 
-    <!-- Architecture Pipeline Visualizer -->
-    <div class="pipeline-container">
-      <div class="pipeline-node active">
-        <span class="node-icon">🅰️</span>
-        <span class="node-label">Angular</span>
-      </div>
-      <div class="pipeline-arrow">➔</div>
-      <div class="pipeline-node">
-        <span class="node-icon">🍃</span>
-        <span class="node-label">Spring Boot 3</span>
-      </div>
-      <div class="pipeline-arrow">➔</div>
-      <div class="pipeline-node">
-        <span class="node-icon">⚡</span>
-        <span class="node-label">AWS Lambda</span>
-      </div>
-      <div class="pipeline-arrow">➔</div>
-      <div class="pipeline-node">
-        <span class="node-icon">✉️</span>
-        <span class="node-label">SendGrid API</span>
-      </div>
-      <div class="pipeline-arrow">➔</div>
-      <div class="pipeline-node">
-        <span class="node-icon">👤</span>
-        <span class="node-label">Destinatario</span>
-      </div>
-    </div>
-  </header>
+      <button 
+        type="button" 
+        class="btn-icon" 
+        (click)="toggleEndpointSettings()" 
+        [attr.aria-expanded]="showEndpointSettings"
+        title="Configuración de endpoint"
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+      </button>
+    </header>
 
-  <!-- Main Content Layout -->
-  <main class="content-wrapper">
-    <section class="card form-card">
-      <div class="card-header">
-        <div class="card-title-group">
-          <div class="card-icon">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-              <polyline points="22,6 12,13 2,6"></polyline>
+    <!-- Endpoint Drawer -->
+    @if (showEndpointSettings) {
+      <div class="endpoint-drawer">
+        <label for="endpoint-url" class="endpoint-label">URL del Servidor API</label>
+        <div class="endpoint-input-row">
+          <input 
+            id="endpoint-url" 
+            type="text" 
+            class="form-control mono-font" 
+            [value]="apiUrl" 
+            #endpointInput 
+            (change)="setEndpoint(endpointInput.value)" 
+            placeholder="http://localhost:8080/send-email"
+          />
+          <button type="button" class="btn-subtle" (click)="setEndpoint(endpointInput.value)">Guardar</button>
+        </div>
+      </div>
+    }
+
+    <!-- Success Alert -->
+    @if (successMessage) {
+      <div class="alert alert-success" role="alert">
+        <svg class="alert-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+        <div class="alert-text">
+          <div class="alert-title">Correo enviado exitosamente</div>
+          <div class="alert-desc">{{ successMessage }}</div>
+        </div>
+        <button type="button" class="alert-close" (click)="dismissAlert()" aria-label="Cerrar">&times;</button>
+      </div>
+    }
+
+    <!-- Error Alert -->
+    @if (errorMessage) {
+      <div class="alert alert-error" role="alert">
+        <svg class="alert-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <div class="alert-text">
+          <div class="alert-title">Error al enviar el correo</div>
+          <div class="alert-desc">{{ errorMessage }}</div>
+        </div>
+        <button type="button" class="alert-close" (click)="dismissAlert()" aria-label="Cerrar">&times;</button>
+      </div>
+    }
+
+    <!-- Email Form -->
+    <form [formGroup]="emailForm" (ngSubmit)="onSubmit()" class="form-body" novalidate>
+      <!-- Campo Para / Destinatario -->
+      <div class="form-group" [class.is-invalid]="f['to'].touched && f['to'].invalid">
+        <div class="label-row">
+          <label for="to" class="field-label">Para</label>
+          @if (f['to'].touched && f['to'].errors?.['required']) {
+            <span class="field-error">Campo requerido</span>
+          }
+          @if (f['to'].touched && f['to'].errors?.['email']) {
+            <span class="field-error">Correo inválido</span>
+          }
+        </div>
+        <input 
+          id="to" 
+          type="email" 
+          formControlName="to" 
+          class="form-control" 
+          placeholder="destinatario@correo.com" 
+          autocomplete="email"
+        />
+      </div>
+
+      <!-- Campo Asunto -->
+      <div class="form-group" [class.is-invalid]="f['subject'].touched && f['subject'].invalid">
+        <div class="label-row">
+          <label for="subject" class="field-label">Asunto</label>
+          @if (f['subject'].touched && f['subject'].errors?.['required']) {
+            <span class="field-error">Campo requerido</span>
+          }
+          @if (f['subject'].touched && f['subject'].errors?.['maxlength']) {
+            <span class="field-error">Máximo 200 caracteres</span>
+          }
+        </div>
+        <input 
+          id="subject" 
+          type="text" 
+          formControlName="subject" 
+          class="form-control" 
+          placeholder="Asunto del correo"
+          maxlength="200"
+        />
+      </div>
+
+      <!-- Campo Mensaje -->
+      <div class="form-group" [class.is-invalid]="f['body'].touched && f['body'].invalid">
+        <div class="label-row">
+          <label for="body" class="field-label">Mensaje</label>
+          @if (f['body'].touched && f['body'].errors?.['required']) {
+            <span class="field-error">Campo requerido</span>
+          }
+          @if (f['body'].touched && f['body'].errors?.['minlength']) {
+            <span class="field-error">Mínimo 5 caracteres</span>
+          }
+        </div>
+        <textarea 
+          id="body" 
+          rows="6" 
+          formControlName="body" 
+          class="form-control form-textarea" 
+          placeholder="Escribe el mensaje aquí..."
+        ></textarea>
+      </div>
+
+      <!-- Actions -->
+      <div class="form-actions">
+        <button 
+          type="button" 
+          class="btn-secondary" 
+          (click)="clearForm()" 
+          [disabled]="isLoading"
+        >
+          Limpiar
+        </button>
+
+        <button 
+          type="submit" 
+          class="btn-primary" 
+          [disabled]="isLoading || emailForm.invalid"
+        >
+          @if (isLoading) {
+            <span class="spinner" aria-hidden="true"></span>
+            <span>Enviando...</span>
+          } @else {
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
             </svg>
-          </div>
-          <div>
-            <h2 class="card-title">Nuevo Mensaje</h2>
-            <p class="card-subtitle">Complete los campos requeridos para enviar el correo</p>
-          </div>
-        </div>
-
-        <div class="header-actions">
-          <button type="button" class="btn-ghost" (click)="fillSample()" title="Llenar datos de ejemplo">
-            <span>✨ Ejemplo</span>
-          </button>
-          <button type="button" class="btn-ghost" (click)="toggleEndpointSettings()" title="Configuración de endpoint">
-            <span>⚙️ Endpoint</span>
-          </button>
-        </div>
+            <span>Enviar</span>
+          }
+        </button>
       </div>
-
-      <!-- Endpoint Settings Collapsible Drawer -->
-      @if (showEndpointSettings) {
-        <div class="endpoint-drawer">
-          <div class="endpoint-header">
-            <label class="field-label" for="custom-api-url">URL del Backend API</label>
-            <span class="status-chip">{{ apiUrl.includes('localhost') ? 'Modo Local' : 'Modo AWS Cloud' }}</span>
-          </div>
-          <div class="endpoint-input-row">
-            <input 
-              id="custom-api-url"
-              type="text" 
-              class="form-input mono" 
-              [value]="apiUrl" 
-              #apiInput 
-              (change)="setEndpoint(apiInput.value)" 
-              placeholder="http://localhost:8080/send-email"
-            />
-          </div>
-          <div class="quick-presets">
-            <span class="preset-label">Preajustes:</span>
-            <button type="button" class="preset-btn" (click)="setEndpoint('http://localhost:8080/send-email')">
-              💻 Local (8080)
-            </button>
-            <button type="button" class="preset-btn" (click)="setEndpoint('https://TU_API_GATEWAY_ID.execute-api.us-east-1.amazonaws.com/dev/send-email')">
-              ☁️ AWS Lambda (API Gateway)
-            </button>
-          </div>
-        </div>
-      }
-
-      <!-- Alert Banners -->
-      @if (successMessage) {
-        <div class="alert alert-success">
-          <div class="alert-icon-box">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-              <polyline points="22 4 12 14.01 9 11.01"></polyline>
-            </svg>
-          </div>
-          <div class="alert-content">
-            <div class="alert-title">Envío Confirmado</div>
-            <div class="alert-body">{{ successMessage }}</div>
-            @if (lastResponse) {
-              <div class="alert-meta">Código HTTP: {{ lastResponse.statusCode }} • {{ lastResponse.timestamp | date:'shortTime' }}</div>
-            }
-          </div>
-          <button type="button" class="alert-close" (click)="dismissAlert()">&times;</button>
-        </div>
-      }
-
-      @if (errorMessage) {
-        <div class="alert alert-error">
-          <div class="alert-icon-box">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <circle cx="12" cy="12" r="10"></circle>
-              <line x1="12" y1="8" x2="12" y2="12"></line>
-              <line x1="12" y1="16" x2="12.01" y2="16"></line>
-            </svg>
-          </div>
-          <div class="alert-content">
-            <div class="alert-title">No se pudo enviar el correo</div>
-            <div class="alert-body">{{ errorMessage }}</div>
-          </div>
-          <button type="button" class="alert-close" (click)="dismissAlert()">&times;</button>
-        </div>
-      }
-
-      <!-- Email Form -->
-      <form [formGroup]="emailForm" (ngSubmit)="onSubmit()" class="email-form" novalidate>
-        
-        <!-- Recipient (to) -->
-        <div class="form-group" [class.has-error]="f['to'].touched && f['to'].invalid">
-          <div class="label-row">
-            <label for="to" class="field-label">Destinatario (to) <span class="required">*</span></label>
-            @if (f['to'].touched && f['to'].errors?.['required']) {
-              <span class="field-error-msg">Requerido</span>
-            }
-            @if (f['to'].touched && f['to'].errors?.['email']) {
-              <span class="field-error-msg">Correo inválido</span>
-            }
-          </div>
-          <div class="input-container">
-            <span class="input-icon">@</span>
-            <input 
-              id="to"
-              type="email" 
-              formControlName="to" 
-              class="form-input with-icon"
-              placeholder="ejemplo@correo.com"
-              autocomplete="email"
-            />
-          </div>
-        </div>
-
-        <!-- Subject -->
-        <div class="form-group" [class.has-error]="f['subject'].touched && f['subject'].invalid">
-          <div class="label-row">
-            <label for="subject" class="field-label">Asunto (subject) <span class="required">*</span></label>
-            @if (f['subject'].touched && f['subject'].errors?.['required']) {
-              <span class="field-error-msg">Requerido</span>
-            }
-            @if (f['subject'].touched && f['subject'].errors?.['maxlength']) {
-              <span class="field-error-msg">Máximo 200 caracteres</span>
-            }
-          </div>
-          <div class="input-container">
-            <span class="input-icon">📌</span>
-            <input 
-              id="subject"
-              type="text" 
-              formControlName="subject" 
-              class="form-input with-icon"
-              placeholder="Asunto relevante de la comunicación"
-              maxlength="200"
-            />
-          </div>
-        </div>
-
-        <!-- Body -->
-        <div class="form-group" [class.has-error]="f['body'].touched && f['body'].invalid">
-          <div class="label-row">
-            <label for="body" class="field-label">Cuerpo del Mensaje (body) <span class="required">*</span></label>
-            @if (f['body'].touched && f['body'].errors?.['required']) {
-              <span class="field-error-msg">Requerido</span>
-            }
-            @if (f['body'].touched && f['body'].errors?.['minlength']) {
-              <span class="field-error-msg">Mínimo 5 caracteres</span>
-            }
-          </div>
-          <textarea 
-            id="body"
-            formControlName="body" 
-            rows="6"
-            class="form-textarea"
-            placeholder="Escriba aquí el contenido del mensaje a despachar..."
-          ></textarea>
-        </div>
-
-        <!-- Form Actions -->
-        <div class="form-actions">
-          <button 
-            type="button" 
-            class="btn-secondary" 
-            (click)="clearForm()" 
-            [disabled]="isLoading"
-          >
-            Limpiar
-          </button>
-
-          <button 
-            type="submit" 
-            class="btn-primary" 
-            [disabled]="isLoading || emailForm.invalid"
-          >
-            @if (isLoading) {
-              <span class="spinner" aria-hidden="true"></span>
-              <span>Procesando envío...</span>
-            } @else {
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="22" y1="2" x2="11" y2="13"></line>
-                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-              </svg>
-              <span>Enviar Correo</span>
-            }
-          </button>
-        </div>
-      </form>
-    </section>
-
-    <!-- Side Panel: Activity & Diagnostics -->
-    <aside class="sidebar-wrapper">
-      <div class="card info-card">
-        <h3 class="side-card-title">Detalles Técnicos</h3>
-        <ul class="spec-list">
-          <li>
-            <span class="spec-name">Servicio Backend</span>
-            <span class="spec-value">Spring Boot 3.3.4 (Java 17)</span>
-          </li>
-          <li>
-            <span class="spec-name">Adaptador Serverless</span>
-            <span class="spec-value">AWS Serverless Java Container</span>
-          </li>
-          <li>
-            <span class="spec-name">Proveedor Email</span>
-            <span class="spec-value">SendGrid Java SDK v4</span>
-          </li>
-          <li>
-            <span class="spec-name">Despliegue</span>
-            <span class="spec-value">Serverless Framework (AWS Lambda)</span>
-          </li>
-        </ul>
-      </div>
-
-      <!-- Recent Submissions History -->
-      @if (historyList.length > 0) {
-        <div class="card history-card">
-          <h3 class="side-card-title">Envíos Recientes</h3>
-          <div class="history-items">
-            @for (item of historyList; track item.timestamp) {
-              <div class="history-row" [class.success]="item.status === 'success'" [class.error]="item.status === 'error'">
-                <div class="history-main">
-                  <div class="history-to">{{ item.to }}</div>
-                  <div class="history-sub">{{ item.subject }}</div>
-                </div>
-                <div class="history-badge">
-                  {{ item.statusCode }}
-                </div>
-              </div>
-            }
-          </div>
-        </div>
-      }
-    </aside>
-  </main>
+    </form>
+  </div>
 </div>

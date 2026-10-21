@@ -5,14 +5,6 @@ import { EmailService } from './services/email.service';
 import { EmailRequest, EmailResponse } from './models/email.model';
 import { environment } from '../environments/environment';
 
-interface HistoryItem {
-  to: string;
-  subject: string;
-  timestamp: Date;
-  status: 'success' | 'error';
-  statusCode: number;
-}
-
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -32,7 +24,6 @@ export class App implements OnInit {
 
   apiUrl: string = environment.apiUrl;
   showEndpointSettings = false;
-  historyList: HistoryItem[] = [];
 
   ngOnInit(): void {
     this.emailForm = this.fb.group({
@@ -51,8 +42,11 @@ export class App implements OnInit {
   }
 
   setEndpoint(url: string): void {
-    this.apiUrl = url;
-    this.emailService.setApiUrl(url);
+    const trimmed = url ? url.trim() : '';
+    if (trimmed) {
+      this.apiUrl = trimmed;
+      this.emailService.setApiUrl(trimmed);
+    }
   }
 
   onSubmit(): void {
@@ -72,12 +66,10 @@ export class App implements OnInit {
         this.isLoading = false;
         this.lastResponse = response;
         if (response.success) {
-          this.successMessage = response.message || '¡Correo enviado con éxito!';
-          this.addToHistory(requestData, 'success', response.statusCode || 202);
+          this.successMessage = response.message || 'Correo enviado exitosamente.';
           this.emailForm.reset();
         } else {
-          this.errorMessage = response.message || 'SendGrid reportó un problema al procesar el envío.';
-          this.addToHistory(requestData, 'error', response.statusCode || 500);
+          this.errorMessage = response.message || 'No se pudo enviar el correo.';
         }
       },
       error: (error) => {
@@ -85,30 +77,14 @@ export class App implements OnInit {
         console.error('Error al enviar correo:', error);
 
         if (error.status === 0) {
-          this.errorMessage = `No se pudo conectar con el servidor en ${this.apiUrl}. Verifique que el backend esté en ejecución y que CORS esté habilitado.`;
+          this.errorMessage = `No se pudo conectar con el servidor (${this.apiUrl}). Verifica que esté en ejecución y con CORS habilitado.`;
         } else if (error.error && error.error.message) {
           this.errorMessage = error.error.message;
         } else {
           this.errorMessage = `Error (${error.status}): ${error.statusText || 'Error inesperado al enviar el correo.'}`;
         }
-
-        this.addToHistory(requestData, 'error', error.status || 0);
       }
     });
-  }
-
-  private addToHistory(req: EmailRequest, status: 'success' | 'error', statusCode: number): void {
-    this.historyList.unshift({
-      to: req.to,
-      subject: req.subject,
-      timestamp: new Date(),
-      status,
-      statusCode
-    });
-
-    if (this.historyList.length > 5) {
-      this.historyList.pop();
-    }
   }
 
   clearForm(): void {
@@ -120,13 +96,5 @@ export class App implements OnInit {
   dismissAlert(): void {
     this.successMessage = null;
     this.errorMessage = null;
-  }
-
-  fillSample(): void {
-    this.emailForm.patchValue({
-      to: 'destinatario@ejemplo.com',
-      subject: 'Prueba de integración SendGrid + Spring Boot Serverless',
-      body: '¡Hola! Este es un correo de prueba enviado desde la arquitectura Angular + Spring Boot 3 + AWS Lambda con SendGrid API.'
-    });
   }
 }
